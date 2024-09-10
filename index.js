@@ -1,10 +1,10 @@
 const { Web3 } = require('web3')
 
-const rpcEndpoint = 'http://127.0.0.1:8545/iXzXVnSRCHaEnNvDzNSXWwtm/main';
+const rpcEndpoint = 'http://127.0.0.1:8545/WexxMSyOgpJLEviRrlVixteJ/main';
 const web3 = new Web3(rpcEndpoint);
 
-const setupAddress = '0xE92C35ea74261cfB8B63b2c8063BD07408c2fe05';
-const challAddress = '0x8b36D8fC8C57484626962e5CA173ca875b674d76';
+const setupAddress = '0x9C836c21460d32F947B176709fC394539BDc75b6';
+const challAddress = '0x15527a4a6Fa6b9263e3bC11D2e6524c7631c9Da3';
 
 const setupABI = require('./setupABI.json');
 const challABI = require('./ChalABI.json');
@@ -12,7 +12,7 @@ const challABI = require('./ChalABI.json');
 const setupInstance = new web3.eth.Contract(setupABI, setupAddress);
 const challInstance = new web3.eth.Contract(challABI, challAddress);
 
-const privateKey = '0x19c7d8906c0d05942451fc9e8abac8b360131219a18d8d029bb4440b1cc54dee';
+const privateKey = '0xe6f48c9bd7201e3523b4acb2b77d2977a03ed950889e7a3af6c98c2e2b178737';
 
 const account = web3.eth.accounts.privateKeyToAccount(privateKey);
 web3.eth.accounts.wallet.add(account);
@@ -58,7 +58,8 @@ async function adjustGasPrice() {
 async function register() {
     try {
         const result = await challInstance.methods.registerBlock().send({
-            from: account.address
+            from: account.address,
+            gasPrice: web3.utils.toWei('200', 'gwei'),
         });
         console.warn("Register Done")
         return result;
@@ -71,7 +72,8 @@ async function register() {
 async function pw(pow) {
     try {
         const result = await challInstance.methods.proveWork(pow).send({
-            from: account.address
+            from: account.address,
+            gasPrice: web3.utils.toWei('200', 'gwei'),
         });
         console.warn("Prove Done")
     } catch (err) {
@@ -83,10 +85,11 @@ async function claim() {
     try {
         const result = await challInstance.methods.claimLastWinner(account.address).send({
             from: account.address,
+            gasPrice: web3.utils.toWei('200', 'gwei'),
         });
         console.warn("Claim Done");
     } catch (err) {
-        // console.error('Error:', err);
+        console.error('Error:', err);
     }
 }
 
@@ -218,6 +221,6 @@ async function monitorBlockNumber() {
 }
 
 // Poll the blockchain every few seconds (e.g., 5 seconds)
-intervalId = setInterval(monitorBlockNumber, 500);
+intervalId = setInterval(monitorBlockNumber, 1);
 
 // solveChallenge()
